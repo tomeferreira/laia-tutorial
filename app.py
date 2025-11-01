@@ -39,10 +39,23 @@ def predict():
     if model is None:
         return jsonify(error="Model not loaded. Please call /reload first."), 503
 
-    data = request.get_json()
-    df = pd.DataFrame(data["data"], columns=data["columns"])
-    preds = model.predict(df)
-    return jsonify(predictions=preds.tolist())
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(error="No JSON data provided"), 400
+        
+        if "data" not in data or "columns" not in data:
+            return jsonify(error="Missing required fields: 'data' and 'columns'"), 400
+        
+        df = pd.DataFrame(data["data"], columns=data["columns"])
+        preds = model.predict(df)
+        return jsonify(predictions=preds.tolist())
+    except KeyError as e:
+        return jsonify(error=f"Missing required field: {str(e)}"), 400
+    except ValueError as e:
+        return jsonify(error=f"Invalid data format: {str(e)}"), 400
+    except Exception as e:
+        return jsonify(error=f"Prediction failed: {str(e)}"), 500
 
 
 @app.route("/reload", methods=["POST"])
