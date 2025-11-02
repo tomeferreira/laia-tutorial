@@ -33,10 +33,10 @@ jobs:
         run: uv sync
       
       - name: Run API unit tests
-        run: uv run pytest ci-tests/test_api.py -v
+        run: uv run pytest tests/test_api.py -v
       
       - name: Run training unit tests
-        run: uv run pytest ci-tests/test_train.py -v
+        run: uv run pytest tests/test_train.py -v
 
   build-images:
     # Continuous Integration - tests passed, build training and serving images
@@ -181,7 +181,7 @@ jobs:
           sleep 10
 
       - name: Run E2E tests
-        run: uv run pytest ci-tests/test_e2e.py -v
+        run: uv run pytest tests/test_e2e.py -v
 
       - name: Show container logs on failure
         if: failure()
@@ -283,7 +283,7 @@ jobs:
           sleep 10
       
       - name: Run E2E tests
-        run: uv run pytest ci-tests/test_e2e.py -v
+        run: uv run pytest tests/test_e2e.py -v
       
       - name: Show container logs on failure
         if: failure()
