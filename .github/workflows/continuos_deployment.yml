@@ -1,5 +1,7 @@
 name: 4 - Continuous Deployment
 
+permissions: write-all
+
 on:
   # Runs when the previous stage finished
   workflow_run:

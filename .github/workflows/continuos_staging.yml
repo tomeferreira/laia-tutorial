@@ -1,5 +1,7 @@
 name: 3 - Continuous Staging
 
+permissions: write-all
+
 on:
   # Runs when the previous stage finished
   workflow_run:

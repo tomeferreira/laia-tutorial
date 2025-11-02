@@ -1,8 +1,6 @@
 name: 2 - Continuous Delivery
 
-permissions:
-  actions: read
-  contents: read
+permissions: write-all
 
 on:
   # Runs when the previous stage finished
