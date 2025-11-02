@@ -61,3 +61,9 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with: { name: serving-image, path: /tmp/serving.tar, retention-days: 1 }
+
+  finalize:
+    needs: [build-images]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "CI complete — artifacts ready"

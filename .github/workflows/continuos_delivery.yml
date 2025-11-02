@@ -30,7 +30,33 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: '3.13' }
       - run: pip install uv
+      - name: Wait for artifact to be available
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          echo "⏳ Waiting for training artifact from run $RUN_ID"
 
+          for i in {1..30}; do
+            echo "🔎 Checking attempt $i..."
+            
+            # Query artifacts list for the triggering run
+            artifacts=$(gh api \
+              repos/${{ github.repository }}/actions/runs/$RUN_ID/artifacts \
+              --jq '.artifacts[].name' || true)
+
+            if echo "$artifacts" | grep -q "training-image"; then
+              echo "✅ Artifact found!"
+              exit 0
+            fi
+            
+            echo "🕒 Artifact not ready yet... sleeping 10s"
+            sleep 10
+          done
+
+          echo "❌ Timeout: Artifact 'training-image' not available after 5 minutes"
+          exit 1
+          
+          
       # Download training image built in the previous stage
       - name: Download training image artifact from CI workflow
         uses: actions/download-artifact@v4
