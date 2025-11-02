@@ -10,8 +10,6 @@ env:
   REGISTRY: ghcr.io
   FLASK_IMAGE_NAME: ${{ github.repository }}/serving
   MLFLOW_TRACKING_URI: http://dsn2026hotcrp.dei.uc.pt:8080
-  MLFLOW_EXPERIMENT_NAME: iris_test_jrc
-  MLFLOW_MODEL_NAME: iris_model_name
 jobs:
   test-unit:
     # Continuous Integration - run light tests
@@ -261,8 +259,10 @@ jobs:
           MLFLOW_TRACKING_URI: ${{ env.MLFLOW_TRACKING_URI }}
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_PASSWORD }}
+          MLFLOW_EXPERIMENT_NAME: iris_test_jrc
+          MLFLOW_MODEL_NAME: iris_model_name
         run: |
-          uv run python promote_to_production.py
+          uv run python promote_model_to_production.py
 
   push-production:
     name: Push Image to Staging
