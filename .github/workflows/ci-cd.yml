@@ -225,34 +225,15 @@ jobs:
             type=ref,event=branch
             type=sha,prefix={{branch}}-
             type=raw,value=staging,enable={{is_default_branch}}
-
-      # Commit a new image layer to apply OCI labels
-      - name: Apply labels to loaded image
-        shell: bash
+            
+      - name: Create promoted OCI manifest with labels
         run: |
-          # Find the loaded image ID (from CI artifact)
-          IMAGE_ID=$(docker images --format "{{.ID}}" --filter reference='serving:*' | head -n 1)
-          
-          # Get labels from metadata
-          LABELS="${{ steps.meta.outputs.labels }}"
-          
-          CHANGE_ARGS=""
-          while IFS= read -r LABEL; do
-            [ -z "$LABEL" ] && continue
-            CHANGE_ARGS="$CHANGE_ARGS --change \"LABEL $LABEL\""
-          done <<< "$LABELS"
-          
-          echo "Applying labels:"
-          echo "$LABELS"
-          
-          # Commit new image layer with labels applied
-          eval docker commit $CHANGE_ARGS "$IMAGE_ID" promoted-image:latest
-
-      # Tag promoted image with all metadata-action tags
-      - name: Tag promoted image
-        run: |
-          for TAG in ${{ steps.meta.outputs.tags }}; do
-            docker tag promoted-image:latest "$TAG"
+          src="serving:${{ github.sha }}"
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            docker buildx imagetools create \
+              --tag "$tag" \
+              $(printf -- "--annotation %s " ${{ steps.meta.outputs.labels }}) \
+              "$src"
           done
 
       - name: Log in to GHCR
