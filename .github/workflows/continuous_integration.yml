@@ -23,8 +23,8 @@ jobs:
         with: { python-version: '3.13' }
       - run: pip install uv
       - run: uv sync
-      - run: uv run pytest ci-tests/test_api.py -v
-      - run: uv run pytest ci-tests/test_train.py -v
+      - run: uv run pytest tests/test_api.py -v
+      - run: uv run pytest tests/test_train.py -v
 
   build-images:
     runs-on: ubuntu-latest
