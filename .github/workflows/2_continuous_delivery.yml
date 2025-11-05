@@ -63,6 +63,12 @@ jobs:
             ${{ env.REGISTRY }}/${{ github.repository }}/training:${{ github.sha }}
 
       - name: Validate Model Quality
+        env:
+          MLFLOW_TRACKING_URI: ${{ env.MLFLOW_TRACKING_URI }}
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_PASSWORD }}
+          MLFLOW_MODEL_NAME: ${{ env.MLFLOW_MODEL_NAME }}
+          MODEL_ALIAS: ${{ github.sha }}
         run: uv run python model-validation/validate_quality.py
 
       # Download serving image built in the previous stage
