@@ -62,6 +62,9 @@ jobs:
             -e COMMIT_SHA \
             ${{ env.REGISTRY }}/${{ github.repository }}/training:${{ github.sha }}
 
+      - name: Validate Model Quality
+        run: uv run python model-validation/validate_quality.py
+
       # Download serving image built in the previous stage
       - run: docker pull ${{ env.REGISTRY }}/${{ github.repository }}/serving:${{ github.sha }}
 
